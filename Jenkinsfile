@@ -8,8 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Clone the source code
-                git branch: 'main', url: 'https://github.com/shriram141521-cmd/Retirements-Platform.git'
+                   git branch: 'main', url: 'https://github.com/shriram141521-cmd/Retirements-Platform.git'
             }
         }
 
