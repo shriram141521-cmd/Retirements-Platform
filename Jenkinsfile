@@ -1,39 +1,46 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    GIT_CREDENTIALS = 'shriram141521'
-  }
-
-  stages {
-    stage('Clone') {
-      steps {
-        git credentialsId: "${env.GIT_CREDENTIALS}", url: 'https://github.com/shriram141521-cmd/Retirements-Platform.git'
-      }
+    triggers {
+        githubPush() // Triggers build on push to GitHub
     }
 
-    stage('Install Dependencies') {
-      steps {
-        sh 'npm install'
-      }
+    stages {
+        stage('Checkout') {
+            steps {
+                // Clone the source code
+                git branch: 'main', url: 'https://github.com/shriram141521-cmd/Retirements-Platform.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building the project...'
+                sh './gradlew build' // or mvn clean install, npm install, etc.
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                sh './gradlew test' // or npm test, etc.
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                // Add deployment script here
+            }
+        }
     }
 
-    stage('Run Tests') {
-      steps {
-        sh 'npm test'
-      }
+    post {
+        success {
+            echo 'Build and test succeeded!'
+        }
+        failure {
+            echo 'Build failed!'
+        }
     }
-
-    stage('Build Package') {
-      steps {
-        sh 'npm run build'
-      }
-    }
-
-    stage('Archive Artifacts') {
-      steps {
-        archiveArtifacts artifacts: 'dist/**', fingerprint: true
-      }
-    }
-  }
 }
